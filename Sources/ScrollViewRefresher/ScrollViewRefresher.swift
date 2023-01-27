@@ -52,6 +52,7 @@ public struct ScrollViewRefresher: View {
                             
                             if rectangleHeight > 50{
                                 Task{
+                                    self.refreshing = true
                                     await self.action()
                                 }
                             }
