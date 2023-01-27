@@ -9,8 +9,8 @@ import SwiftUI
 
 @available(iOS 14, *)
 public struct ScrollViewRefresher: View {
-    @Binding var refreshing: Bool
-    let action: () async -> Void
+    @Binding public var refreshing: Bool
+    public let action: () async -> Void
     @State private var rectangleHeight: CGFloat = 0
     @State private var initialLocation: CGFloat = 0
     @State private var currentLocation: CGFloat = 0
