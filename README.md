@@ -1,6 +1,6 @@
 # ScrollViewRefresher
 
-## Easy SwiftUI 2.0 Scroll View Refresher
+## Lightweight and easy SwiftUI 2.0 Scroll View Refresher
 
 ### Usage
 

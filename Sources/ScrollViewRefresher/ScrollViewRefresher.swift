@@ -8,14 +8,14 @@
 import SwiftUI
 
 @available(iOS 14, *)
-struct ScrollViewRefresher: View {
+public struct ScrollViewRefresher: View {
     @Binding var refreshing: Bool
     let action: () async -> Void
     @State private var rectangleHeight: CGFloat = 0
     @State private var initialLocation: CGFloat = 0
     @State private var currentLocation: CGFloat = 0
     
-    var body: some View {
+    public var body: some View {
         GeometryReader{ proxy in
             ZStack{
                 Rectangle()
@@ -55,21 +55,6 @@ struct ScrollViewRefresher: View {
             
         }
         .frame(height: rectangleHeight, alignment: .center)
-    }
-    
-    func action() async{
-        //TODO: Implement async action that will refresh the view, update refreshing once finished
-        do{
-            // Delay the task to simulate API call or some other action
-            try await Task.sleep(nanoseconds: 5_000_000_000)
-            await MainActor.run{
-                // Once task is finished update the refreshing state
-                self.refreshing = false
-            }
-        } catch {
-            // TODO: Handle error
-            print(error.localizedDescription)
-        }
     }
 }
 
