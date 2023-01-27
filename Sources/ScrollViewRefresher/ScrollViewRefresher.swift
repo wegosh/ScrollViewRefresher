@@ -47,7 +47,9 @@ public struct ScrollViewRefresher: View {
                         currentLocation = value
                         withAnimation{
                             if !refreshing{
-                                rectangleHeight = currentLocation > initialLocation ? -(initialLocation - currentLocation) : 0
+                                DispatchQueue.main.async {
+                                    rectangleHeight = currentLocation > initialLocation ? -(initialLocation - currentLocation) : 0
+                                }
                             }
                             
                             if rectangleHeight > 50{
