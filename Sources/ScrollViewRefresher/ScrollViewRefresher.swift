@@ -9,12 +9,22 @@ import SwiftUI
 
 @available(iOS 14, *)
 public struct ScrollViewRefresher: View {
-    @Binding public var refreshing: Bool
-    public let action: () async -> Void
+    //MARK: State properties
+    @Binding private var refreshing: Bool
     @State private var rectangleHeight: CGFloat = 0
     @State private var initialLocation: CGFloat = 0
     @State private var currentLocation: CGFloat = 0
     
+    //MARK: Variables
+    private let action: () async -> Void
+    
+    //MARK: Initializers
+    public init(refreshing: Binding<Bool>, action: @escaping () -> Void) {
+        _refreshing = refreshing
+        self.action = action
+    }
+    
+    //MARK: Body
     public var body: some View {
         GeometryReader{ proxy in
             ZStack{
