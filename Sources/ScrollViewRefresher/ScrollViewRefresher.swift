@@ -19,7 +19,7 @@ public struct ScrollViewRefresher: View {
     private let action: () async -> Void
     
     //MARK: Initializers
-    public init(refreshing: Binding<Bool>, action: @escaping () -> Void) {
+    public init(refreshing: Binding<Bool>, action: @escaping () async -> Void) {
         _refreshing = refreshing
         self.action = action
     }
