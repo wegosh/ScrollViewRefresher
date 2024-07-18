@@ -10,64 +10,65 @@ import SwiftUI
 @available(iOS 14, *)
 public struct ScrollViewRefresher: View {
     //MARK: State properties
-    @Binding private var refreshing: Bool
+    @State private var isRefreshing: Bool = false
     @State private var rectangleHeight: CGFloat = 0
     @State private var initialLocation: CGFloat = 0
     @State private var currentLocation: CGFloat = 0
     
-    //MARK: Variables
+    //MARK: Closures
     private let action: () async -> Void
     
+    // MARK: Computed properties
+    private var shouldShowRefreshIndicator: Bool {
+        rectangleHeight > 50
+    }
+    
     //MARK: Initializers
-    public init(refreshing: Binding<Bool>, action: @escaping () async -> Void) {
-        _refreshing = refreshing
+    public init(action: @escaping () async -> Void) {
         self.action = action
     }
     
     //MARK: Body
     public var body: some View {
-        GeometryReader{ proxy in
-            ZStack{
+        GeometryReader { proxy in
+            ZStack {
                 Rectangle()
-                    .fill(.clear)
-                    .frame(height: rectangleHeight, alignment: .center)
-                    .onAppear{
+                    .fill(Color.clear)
+                    .frame(height: rectangleHeight)
+                    .onAppear {
                         initialLocation = proxy.frame(in: .global).origin.y
                         currentLocation = initialLocation
                     }
-                    .onChange(of: refreshing, perform: { value in
-                        if value == false {
-                            withAnimation{
-                                currentLocation = initialLocation
-                                rectangleHeight = 0
-                            }
-                        }
-                    })
-                    .onChange(of: proxy.frame(in: .global).origin.y, perform: { value in
+                    .onChange(of: proxy.frame(in: .global).origin.y) { value in
                         currentLocation = value
-                        withAnimation{
-                            if !refreshing{
-                                DispatchQueue.main.async {
-                                    rectangleHeight = currentLocation > initialLocation ? -(initialLocation - currentLocation) : 0
+                        if !isRefreshing {
+                            let newHeight = max(0, currentLocation - initialLocation)
+                            if newHeight != rectangleHeight {
+                                withAnimation {
+                                    rectangleHeight = newHeight
                                 }
                             }
                             
-                            if rectangleHeight > 50{
-                                Task{
-                                    self.refreshing = true
+                            if shouldShowRefreshIndicator && !isRefreshing {
+                                isRefreshing = true
+                                Task { @MainActor in
                                     await self.action()
+                                    withAnimation {
+                                        self.isRefreshing = false
+                                        self.rectangleHeight = 0
+                                    }
                                 }
                             }
                         }
-                    })
-                if rectangleHeight > 50{
+                    }
+                if shouldShowRefreshIndicator {
                     ProgressView()
                 }
             }
-            .frame(height: rectangleHeight, alignment: .center)
-            
+            .frame(height: rectangleHeight)
+            .opacity(isRefreshing ? 1 : 0)
+            .animation(.easeInOut(duration: 1), value: shouldShowRefreshIndicator)
         }
-        .frame(height: rectangleHeight, alignment: .center)
+        .frame(height: rectangleHeight)
     }
 }
-

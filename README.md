@@ -6,11 +6,10 @@
 
 ``````swift
 struct Content: View{
-    @State private var refreshing: Bool = false
     var body: some View{
         ScrollView{
             VStack{
-                ScrollViewRefresher(refreshing: $refreshing, action: action)
+                ScrollViewRefresher(action: action)
                 ForEach(0..<10, id: \.self){item in
                     Text("Item: \(item)")
                 }
@@ -22,14 +21,10 @@ struct Content: View{
         //TODO: Implement async action that will refresh the view, update refreshing once finished         
         do{             
             // Delay the task to simulate API call or some other action             
-            try await Task.sleep(nanoseconds: 5_000_000_000)             
-            await MainActor.run{                 
-                // Once task is finished update the refreshing state                 
-                self.refreshing = false            
-            }         
+            try? await Task.sleep(for: .seconds(2))      
         } catch {             
-        // TODO: Handle error   
-             print(error.localizedDescription)         
+            // TODO: Handle error   
+            print(error.localizedDescription)         
         }
     }
 }
